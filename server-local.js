@@ -1,13 +1,28 @@
 const express = require('express')
 const app = express();
-const cors = require('cors')
+const cors = require('cors');
 
 app.use(cors());
 
-app.get('/test', (req, res) =>{
-  res.json({
-    test: "working"
-  })
+app.post('/poe', (req, res) => {
+
+  const request = require('request');
+  const options = {
+    'method': 'POST',
+    'url': 'https://api.poeditor.com/v2/terms/list',
+    'headers': {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    form: {
+      'api_token': '5ceb60d6b7bdd2ee0ffd934cb3711e8c',
+      'id': '402195',
+      'language': 'en'
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    res.send(JSON.parse(response.body))
+  });
 
 });
 
