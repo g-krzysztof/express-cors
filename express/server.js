@@ -1,10 +1,11 @@
 const express = require('express');
-const path = require('path');
+// const path = require('path');
 const serverless = require('serverless-http');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
+app.use(bodyParser());
 app.use(cors());
 
 const router = express.Router();
@@ -26,7 +27,7 @@ router.post('/poe', (req, res) => {
     form: {
       'api_token': '5ceb60d6b7bdd2ee0ffd934cb3711e8c',
       'id': '402195',
-      'language': 'pl'
+      'language': req.body.language
     }
   };
   request(options, function (error, response) {
@@ -36,12 +37,31 @@ router.post('/poe', (req, res) => {
 
 });
 
-router.get('/another', (req, res) => res.json({ route: req.originalUrl }));
-router.post('/', (req, res) => res.json({ postBody: req.body }));
+app.post('/poeAdd', (req, res) => {
 
-app.use(bodyParser.json());
-app.use('/.netlify/functions/server', router);  // path must route to lambda
-app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
+  const request = require('request');
+  const options = {
+    'method': 'POST',
+    'url': 'https://api.poeditor.com/v2/terms/add',
+    'headers': {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    form: {
+      'api_token': '5ceb60d6b7bdd2ee0ffd934cb3711e8c',
+      'data': req.body.data,
+      'id': '402195'
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    res.send(JSON.parse(response.body))
+  });
+
+});
+
+// app.use(bodyParser.json());
+// app.use('/.netlify/functions/server', router);  // path must route to lambda
+// app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
 module.exports = app;
 module.exports.handler = serverless(app);
