@@ -37,7 +37,7 @@ router.post('/poe', (req, res) => {
 
 });
 
-app.post('/poeAdd', (req, res) => {
+router.post('/poeAdd', (req, res) => {
 
   const request = require('request');
   const options = {
